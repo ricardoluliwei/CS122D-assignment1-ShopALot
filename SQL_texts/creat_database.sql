@@ -67,7 +67,7 @@ CREATE TABLE Orders (
 
 -- Relationship tables below: --
 
-DROP TABLE IF EXISTS UserPhon;e
+DROP TABLE IF EXISTS UserPhone;
 CREATE TABLE UserPhone(
     user_id char(5), 
     type varchar(10), 

@@ -10,12 +10,12 @@ CREATE TABLE Users (
 
 DROP TABLE IF EXISTS Customers; 
 CREATE TABLE Customers (
-    user_id char(5) PRIMARY KEY REFERENCES Users (user_id)
+    user_id char(5) PRIMARY KEY
 );
 
 DROP TABLE IF EXISTS Shoppers; 
 CREATE TABLE Shoppers (
-    user_id char(5) PRIMARY KEY REFERENCES Users (user_id), 
+    user_id char(5) PRIMARY KEY,  
     capacity INTEGER 
 );
 

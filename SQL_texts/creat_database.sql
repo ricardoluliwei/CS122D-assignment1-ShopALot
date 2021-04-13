@@ -39,16 +39,16 @@ CREATE TABLE Stores (
     state char(2), 
     zip_code char(5), 
     phone varchar(20), 
-    categories varchar(100)
+    categories varchar(300)
 );
 
 DROP TABLE IF EXISTS Products;
 CREATE TABLE Products(
     product_id char(5) PRIMARY KEY, 
     category varchar(100) NOT NULL, 
-    name varchar(50) NOT NULL, 
+    name varchar(100) NOT NULL, 
     description varchar(100) NOT NULL, 
-    list_price decimal(9,2) NOT NULL
+    list_price decimal(9,2) 
 );
 
 DROP TABLE IF EXISTS Orders; 

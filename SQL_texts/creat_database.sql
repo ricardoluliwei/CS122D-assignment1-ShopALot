@@ -24,8 +24,8 @@ CREATE TABLE Vehicles (
     state char(2) NOT NULL, 
     license_plate varchar(15) NOT NULL, 
     year INTEGER, 
-    model varchar(20), 
-    make varchar(20) NOT NULL, 
+    model varchar(50), 
+    make varchar(50) NOT NULL, 
     color varchar(10) NOT NULL,
     PRIMARY KEY (state, license_plate) 
 );
@@ -39,15 +39,15 @@ CREATE TABLE Stores (
     state char(2), 
     zip_code char(5), 
     phone varchar(20), 
-    categories varchar(50)
+    categories varchar(100)
 );
 
 DROP TABLE IF EXISTS Products;
 CREATE TABLE Products(
     product_id char(5) PRIMARY KEY, 
-    category varchar(50) NOT NULL, 
+    category varchar(100) NOT NULL, 
     name varchar(50) NOT NULL, 
-    description varchar(50) NOT NULL, 
+    description varchar(100) NOT NULL, 
     list_price decimal(9,2) NOT NULL
 );
 

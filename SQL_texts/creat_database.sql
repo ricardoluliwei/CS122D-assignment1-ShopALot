@@ -42,7 +42,7 @@ CREATE TABLE Stores (
     categories varchar(50)
 );
 
-DROP TABLE IF EXISTS Product;s
+DROP TABLE IF EXISTS Products;
 CREATE TABLE Products(
     product_id char(5) PRIMARY KEY, 
     category varchar(50) NOT NULL, 

@@ -5,4 +5,5 @@
 -- and the length of the list for each store with a zip code of 44401. You may also find the array_length() function useful.
 
 
-SELECT s.store_id, s.name, 
+SELECT s.store_id, s.name, string_to_array(s.categories, ',')
+FROM stores s

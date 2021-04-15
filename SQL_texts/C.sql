@@ -5,6 +5,9 @@
 -- Rank the results going from the largest number of such products to the lowest. 
 -- Print the first 10 rows.
 
-SELECT oi.order_id, oi.product_id, o.store_id
-FROM orderitems oi, products p, orders o
-WHERE oi.order_id = o.order_id AND oi.product_id = p.product_id AND oi.selling_price < p.list_price
+SELECT s.store_id, s.name, COUNT (DISTINCT oi.product_id) AS num_product 
+FROM orderitems oi, products p, orders o, stores s
+WHERE oi.order_id = o.order_id AND oi.product_id = p.product_id AND s.store_id = o.store_id AND oi.selling_price < p.list_price
+GROUP BY s.store_id 
+ORDER BY num_product DESC
+LIMIT 10

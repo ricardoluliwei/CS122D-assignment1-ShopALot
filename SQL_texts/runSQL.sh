@@ -19,6 +19,12 @@ then
     exit
 fi
 
+if [ $# != 0 ]
+then 
+    psql shopalot -h localhost -f $1
+    exit
+fi
+
 if [ ! -d Output ]
 then 
     mkdir Output

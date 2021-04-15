@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS Person;
+
 CREATE TABLE Person ( 
     id int,
     name varchar(20),
@@ -10,8 +12,13 @@ INSERT INTO Person VALUES
 (3, 'Hans Solo', 'flying');
 
 SELECT * FROM Person p;
-SELECT p.id, p.name, string_to_array(p.hobbies,',')
 
+SELECT p.id, p.name, string_to_array(p.hobbies,',')
 FROM Person p;
+
 SELECT p.id, p.name, hobby
-FROM Person p, UNNEST(string_to_array(p.hobbies,',')) AS hobby ORDER BY p.id;
+FROM Person p, UNNEST(string_to_array(p.hobbies,',')) AS hobby
+ORDER BY p.id;
+
+select *
+from UNNEST(string_to_array(person.hobbies,',')) 

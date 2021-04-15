@@ -7,3 +7,4 @@ SELECT s.store_id, s.name, category
 FROM stores s, UNNEST(string_to_array(s.categories, ', ')) as category
 WHERE s.zip_code = '44401'
 ORDER BY s.store_id
+;

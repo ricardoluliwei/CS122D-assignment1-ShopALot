@@ -11,3 +11,4 @@ WHERE oi.order_id = o.order_id AND oi.product_id = p.product_id AND s.store_id =
 GROUP BY s.store_id 
 ORDER BY num_product DESC
 LIMIT 10
+;

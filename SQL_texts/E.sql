@@ -5,3 +5,4 @@
 SELECT AVG(o.total_price)
 FROM orders o
 WHERE o.time_placed::date <= date '2020-04-01' AND o.time_placed >= (date '2020-04-01' - 7)
+;

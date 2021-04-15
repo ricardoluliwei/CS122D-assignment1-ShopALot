@@ -15,3 +15,4 @@ FROM category_count AS cc, products AS p
 WHERE cc.category = p.category
 GROUP BY cc.category, cc.num_stores
 ORDER BY cc.num_stores DESC
+;

@@ -8,3 +8,4 @@ FROM orders o, orderitems oi
 WHERE o.order_id = oi.order_id AND date '2020-05-01' <= o.time_placed::date AND o.time_placed::date <= date '2020-07-01'
 GROUP BY o.order_id
 HAVING SUM (oi.qty) > 25;
+;

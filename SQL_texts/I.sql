@@ -30,5 +30,5 @@ WHERE o.total_price > 650
 
 
 /*
-The 
+The sequential scan select 2964 rows out of 
 */

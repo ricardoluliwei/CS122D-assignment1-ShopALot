@@ -1,0 +1,21 @@
+ store_id |             name             |        category        
+----------+------------------------------+------------------------
+ FNJXE    | Pump-N-Pantry Of NY          | Beverages
+ FNJXE    | Pump-N-Pantry Of NY          | Deli
+ FNJXE    | Pump-N-Pantry Of NY          | Frozen Foods
+ FNJXE    | Pump-N-Pantry Of NY          | Fruits & Vegetables
+ FNJXE    | Pump-N-Pantry Of NY          | Grains & Pasta & Sides
+ FNJXE    | Pump-N-Pantry Of NY          | Personal Care & Health
+ FNJXE    | Pump-N-Pantry Of NY          | Baby Care
+ FNJXE    | Pump-N-Pantry Of NY          | Bread & Bakery
+ FNJXE    | Pump-N-Pantry Of NY          | Breakfast & Cereal
+ FNJXE    | Pump-N-Pantry Of NY          | Meat & Seafood
+ FNJXE    | Pump-N-Pantry Of NY          | Pet Care
+ FX0RG    | 6-Twelve Convenient-Mart Inc | Baby Care
+ FX0RG    | 6-Twelve Convenient-Mart Inc | Bread & Bakery
+ FX0RG    | 6-Twelve Convenient-Mart Inc | Canned Goods & Soups
+ FX0RG    | 6-Twelve Convenient-Mart Inc | Frozen Foods
+ FX0RG    | 6-Twelve Convenient-Mart Inc | Fruits & Vegetables
+ FX0RG    | 6-Twelve Convenient-Mart Inc | Meat & Seafood
+(17 rows)
+

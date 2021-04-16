@@ -1,0 +1,15 @@
+ stores_count 
+--------------
+          400
+(1 row)
+
+ customers_count 
+-----------------
+            5000
+(1 row)
+
+ products_count 
+----------------
+            541
+(1 row)
+

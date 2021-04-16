@@ -1,0 +1,5 @@
+ first_name | last_name 
+------------+-----------
+ Michele    | Griffin
+(1 row)
+

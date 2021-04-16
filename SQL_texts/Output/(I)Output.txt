@@ -1,0 +1,18 @@
+DROP TABLE
+CREATE TABLE
+COPY 20000
+ count 
+-------
+  5265
+(1 row)
+
+                                                 QUERY PLAN                                                  
+-------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=365.56..365.57 rows=1 width=8) (actual time=5.926..5.926 rows=1 loops=1)
+   ->  Seq Scan on orders o  (cost=0.00..358.15 rows=2964 width=0) (actual time=1.159..5.915 rows=4 loops=1)
+         Filter: (total_price > '650'::numeric)
+         Rows Removed by Filter: 19996
+ Planning Time: 0.087 ms
+ Execution Time: 5.972 ms
+(6 rows)
+

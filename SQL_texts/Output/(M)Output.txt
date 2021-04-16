@@ -1,0 +1,14 @@
+ product_id |                                             name                                              |        category        | list_price | rank 
+------------+-----------------------------------------------------------------------------------------------+------------------------+------------+------
+ A0LI2      | Buitoni Basil Pesto Pasta Sauce - 7 Oz.                                                       | Grains & Pasta & Sides |            |    1
+ BRYPX      | waterfront BISTRO Salmon Fillets Wild Alaskin Pink Boneless & Skin On - 32 Oz                 | Meat & Seafood         |            |    1
+ 93NRR      | Quaker Oatmeal Instant Flavor Variety - 10-1.51 Oz                                            | Breakfast & Cereal     |            |    1
+ 5YV6H      | Coffeemate Coffee Creamer Original - 35.3 Oz                                                  | Beverages              |            |    1
+ 8YAY3      | Lucerne Farms Eggs Large - 12 Count                                                           | Dairy & Eggs & Cheese  |            |    1
+ FJZQE      | Rosarita Beans Refried Traditional Can - 16 Oz                                                | Canned Goods & Soups   |            |    1
+ X0401      | USDA Choice Beef Ribeye Roast Bone In - 6 Lbs. (approx. weight)                               | Meat & Seafood         |      59.94 |    7
+ HW481      | USDA Choice Beef Top Loin New York Strip Steak Bone In Value Pack - 3.5 Lbs. (approx. weight) | Meat & Seafood         |      34.97 |    8
+ Y7KB7      | Pull-Ups Training Pants Learning Designs 4T-5T Day & Night Disney Pixar - 56 Count            | Baby Care              |      32.99 |    9
+ 4S9UJ      | Cesar Classics Canine Cuisine 4 Assorted Flavors Box - 24-3.5 Oz                              | Pet Care               |      28.29 |   10
+(10 rows)
+

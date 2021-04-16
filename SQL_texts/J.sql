@@ -46,3 +46,9 @@ SET total_price = iop.total_price
 FROM inconsistent_order_price iop
 WHERE orders.order_id = iop.order_id
 ;
+
+/*
+The running time is 0.164 ms, it is much faster than without index.
+The main reason is that after index, the total_price are sorted and stored in some kind of data structure(default is btree).
+So it is much quicker to find the total_price that are > 650
+*/

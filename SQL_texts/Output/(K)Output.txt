@@ -1,0 +1,13 @@
+CREATE INDEX
+                                                            QUERY PLAN                                                             
+-----------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=478.96..478.97 rows=1 width=8) (actual time=0.092..0.095 rows=1 loops=1)
+   ->  Bitmap Heap Scan on orders o  (cost=131.96..462.29 rows=6667 width=0) (actual time=0.065..0.072 rows=4 loops=1)
+         Recheck Cond: (total_price > '650'::numeric)
+         Heap Blocks: exact=4
+         ->  Bitmap Index Scan on idx_total_price  (cost=0.00..130.29 rows=6667 width=0) (actual time=0.043..0.044 rows=4 loops=1)
+               Index Cond: (total_price > '650'::numeric)
+ Planning Time: 0.549 ms
+ Execution Time: 0.212 ms
+(8 rows)
+

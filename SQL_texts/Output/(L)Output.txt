@@ -1,0 +1,24 @@
+ state |     city     | zip_code | num_store 
+-------+--------------+----------+-----------
+       |              |          |       400
+ WV    |              |          |         8
+ WV    | Sistersville |          |         1
+ WV    | Sistersville | 26175    |         1
+ WV    | Lerona       |          |         1
+ WV    | Lerona       | 25971    |         1
+ WV    | Huntington   |          |         1
+ WV    | Huntington   | 25774    |         1
+ WV    | Glenwood     |          |         1
+ WV    | Glenwood     | 25520    |         1
+ WV    | Follansbee   |          |         1
+ WV    | Follansbee   | 26037    |         1
+ WV    | Elkhorn      |          |         1
+ WV    | Elkhorn      | 24831    |         1
+ WV    | Charleston   |          |         1
+ WV    | Charleston   | 25311    |         1
+ WV    | Bomont       |          |         1
+ WV    | Bomont       | 25030    |         1
+ WI    |              |          |         9
+ WI    | Ripon        |          |         1
+(20 rows)
+

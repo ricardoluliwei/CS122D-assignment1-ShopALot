@@ -22,6 +22,11 @@ FROM '/Users/ricardo/Desktop/UCI Course/2021 Spring/CS122D/assignments/assignmen
 DELIMITER ','
 CSV HEADER;
 
+SELECT COUNT(*)
+FROM orders o 
+WHERE o.total_price > 65
+;
+
 EXPLAIN (ANALYZE TRUE)
 SELECT COUNT(*)
 FROM orders o 
@@ -29,6 +34,7 @@ WHERE o.total_price > 650
 ;
 
 
+-- Answers to Question
 /*
-The sequential scan select 2964 rows out of 
+It is selective because it selects 4 rows out of 20000. It take about 7.078ms to run
 */

@@ -21,7 +21,7 @@ fi
 
 if [ $# != 0 ]
 then 
-    psql shopalot -h localhost -f $1
+    psql shopalot -h localhost -a -f $1 > results.txt
     exit
 fi
 
@@ -34,4 +34,3 @@ for i in A B C D E F G H I J K L M
 do
     psql shopalot -h localhost -f "$i.sql" > "Output/($i)Output.txt"
 done
-

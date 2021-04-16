@@ -1,0 +1,6 @@
+ store_id |             name             |                                                                                   categories_array                                                                                    | array_length 
+----------+------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------
+ FNJXE    | Pump-N-Pantry Of NY          | {Beverages,Deli,"Frozen Foods","Fruits & Vegetables","Grains & Pasta & Sides","Personal Care & Health","Baby Care","Bread & Bakery","Breakfast & Cereal","Meat & Seafood","Pet Care"} |           11
+ FX0RG    | 6-Twelve Convenient-Mart Inc | {"Baby Care","Bread & Bakery","Canned Goods & Soups","Frozen Foods","Fruits & Vegetables","Meat & Seafood"}                                                                           |            6
+(2 rows)
+

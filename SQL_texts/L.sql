@@ -8,3 +8,4 @@ FROM stores
 GROUP BY ROLLUP(state, city, zip_code)
 ORDER BY (state, city, zip_code) DESC
 LIMIT 20
+;

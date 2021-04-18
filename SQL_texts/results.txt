@@ -1,5 +1,15 @@
 --Creat Table DDLs--
-DROP TABLE IF EXISTS Users; 
+DROP TABLE IF EXISTS StockedBy; 
+DROP TABLE
+DROP TABLE IF EXISTS Own; 
+DROP TABLE
+DROP TABLE IF EXISTS WorkFor; 
+DROP TABLE
+DROP TABLE IF EXISTS UserPhone;
+DROP TABLE
+DROP TABLE IF EXISTS OrderItems; 
+DROP TABLE
+DROP TABLE IF EXISTS Orders; 
 DROP TABLE
 DROP TABLE IF EXISTS Customers; 
 DROP TABLE
@@ -11,17 +21,7 @@ DROP TABLE IF EXISTS Stores;
 DROP TABLE
 DROP TABLE IF EXISTS Products;
 DROP TABLE
-DROP TABLE IF EXISTS Orders; 
-DROP TABLE
-DROP TABLE IF EXISTS UserPhone;
-DROP TABLE
-DROP TABLE IF EXISTS OrderItems; 
-DROP TABLE
-DROP TABLE IF EXISTS StockedBy; 
-DROP TABLE
-DROP TABLE IF EXISTS Own; 
-DROP TABLE
-DROP TABLE IF EXISTS WorkFor; 
+DROP TABLE IF EXISTS Users; 
 DROP TABLE
 -- Entity tables below: --
 CREATE TABLE Users (
@@ -31,13 +31,23 @@ CREATE TABLE Users (
     last_name varchar(50) NOT NULL
 );
 CREATE TABLE
+CREATE TABLE UserPhone(
+    user_id char(5), 
+    type varchar(10), 
+    number varchar(20),
+    PRIMARY KEY (user_id, number),     
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) 
+);
+CREATE TABLE
 CREATE TABLE Customers (
-    user_id char(5) PRIMARY KEY
+    user_id char(5) PRIMARY KEY,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) 
 );
 CREATE TABLE
 CREATE TABLE Shoppers (
     user_id char(5) PRIMARY KEY,  
-    capacity INTEGER 
+    capacity INTEGER, 
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) 
 );
 CREATE TABLE
 CREATE TABLE Vehicles (
@@ -51,19 +61,19 @@ CREATE TABLE Vehicles (
 );
 CREATE TABLE
 CREATE TABLE Stores (
-    store_id varchar(5) PRIMARY KEY, 
-    name varchar(50), 
-    street varchar(100), 
-    city varchar(50),
-    state char(2), 
-    zip_code char(5), 
-    phone varchar(20), 
-    categories varchar(300)
+    store_id char(5) PRIMARY KEY, 
+    name varchar(50) NOT NULL, 
+    street varchar(100) NOT NULL, 
+    city varchar(50) NOT NULL,
+    state char(2) NOT NULL, 
+    zip_code char(5) NOT NULL, 
+    phone varchar(20) NOT NULL, 
+    categories varchar(300) NOT NULL
 );
 CREATE TABLE
 CREATE TABLE Products(
     product_id char(5) PRIMARY KEY, 
-    category varchar(100) NOT NULL, 
+    category varchar(100) NOT NULL,
     name varchar(100) NOT NULL, 
     description varchar(100) NOT NULL, 
     list_price decimal(9,2) 
@@ -71,23 +81,19 @@ CREATE TABLE Products(
 CREATE TABLE
 CREATE TABLE Orders (
     order_id char(5) PRIMARY KEY, 
-    total_price decimal(9,2), 
-    time_placed timestamp, 
+    total_price decimal(9,2) NOT NULL, 
+    time_placed timestamp NOT NULL, 
     pickup_time timestamp, 
-    customer_id char(5), 
-    shopper_id char(5), 
-    state char(2), 
-    license_plate varchar(15), 
-    store_id char(5), 
-    time_fulfilled timestamp
-);
-CREATE TABLE
--- Relationship tables below: --
-CREATE TABLE UserPhone(
-    user_id char(5), 
-    type varchar(10), 
-    number varchar(20),
-    PRIMARY KEY (user_id, number)     
+    customer_id char(5) NOT NULL, 
+    shopper_id char(5) NOT NULL, 
+    state char(2) NOT NULL, 
+    license_plate varchar(15) NOT NULL, 
+    store_id char(5) NOT NULL, 
+    time_fulfilled timestamp,
+    FOREIGN KEY (customer_id) REFERENCES Customers(user_id),
+    FOREIGN KEY (shopper_id) REFERENCES Shoppers(user_id),
+    FOREIGN KEY (store_id) REFERENCES Stores(store_id),
+    FOREIGN KEY (state,license_plate) REFERENCES Vehicles(state,license_plate)
 );
 CREATE TABLE
 CREATE TABLE OrderItems (
@@ -96,27 +102,36 @@ CREATE TABLE OrderItems (
     selling_price decimal(9, 2), 
     order_id char(5), 
     product_id char(5),
-    PRIMARY KEY (item_id, order_id) 
+    PRIMARY KEY (item_id, order_id),
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id)
 ); 
 CREATE TABLE
+-- Relationship tables below: --
 CREATE TABLE StockedBy (
     product_id char(5), 
     store_id char(5), 
     qty INTEGER,
-    PRIMARY KEY (product_id, store_id) 
+    PRIMARY KEY (product_id, store_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (store_id) REFERENCES Stores(store_id)
 );
 CREATE TABLE
 CREATE TABLE Own (
     state char(2), 
     license_plate char(15), 
     user_id char(5),
-    PRIMARY KEY (state, license_plate, user_id) 
+    PRIMARY KEY (state, license_plate, user_id),
+    FOREIGN KEY (state,license_plate) REFERENCES Vehicles(state,license_plate),
+    FOREIGN KEY (user_id) REFERENCES Customers(user_id)
 );
 CREATE TABLE
 CREATE TABLE WorkFor (
     store_id char(5), 
     shopper_id char(5),
-    PRIMARY KEY (store_id, shopper_id) 
+    PRIMARY KEY (store_id, shopper_id),
+    FOREIGN KEY (store_id) REFERENCES Stores(store_id),
+    FOREIGN KEY (shopper_id) REFERENCES Shoppers(user_id)
 );
 CREATE TABLE
 -- Data Loading --
@@ -213,7 +228,7 @@ FROM products
 -- who are able to handle at least 5 orders at a time. List all the shoppers
 -- with a capacity of at least 5 who work for one or more of the stores
 -- located in Seattle, WA.
-SELECT u.first_name, u.last_name 
+SELECT u.user_id, u.first_name, u.last_name 
 FROM users u, shoppers s
 WHERE 
     u.user_id = s.user_id 
@@ -225,9 +240,9 @@ WHERE
         WHERE s1.city = 'Seattle' AND s1.state = 'WA'
     )
 ;
- first_name | last_name 
-------------+-----------
- Michele    | Griffin
+ user_id | first_name | last_name 
+---------+------------+-----------
+ A75S3   | Michele    | Griffin
 (1 row)
 
 -- Problem C --
@@ -266,69 +281,16 @@ LIMIT 10
 SELECT o.order_id, o.total_price, o.time_placed
 FROM orders o, orderitems oi
 WHERE o.order_id = oi.order_id AND date '2020-05-01' <= o.time_placed::date AND o.time_placed::date <= date '2020-07-01'
-GROUP BY o.order_id
-HAVING SUM (oi.qty) > 25;
+AND oi.qty >= 25
+;
  order_id | total_price |     time_placed     
 ----------+-------------+---------------------
- 0TFAH    |      379.64 | 2020-05-05 21:10:19
- 0W1KD    |      201.03 | 2020-06-15 16:02:06
- 1DQ5P    |      169.42 | 2020-06-10 17:42:07
- 2DRZV    |      130.82 | 2020-06-18 12:40:09
- 2KP5B    |       73.75 | 2020-05-05 15:44:03
- 2MSAT    |       91.32 | 2020-05-26 15:24:48
- 2S6NG    |      135.43 | 2020-06-29 10:29:28
- 3RL30    |      254.78 | 2020-06-04 11:40:28
- 575JY    |      129.42 | 2020-06-17 08:10:05
- 5IZ2R    |      168.30 | 2020-06-09 02:42:38
- 6AY91    |      298.66 | 2020-06-12 23:20:01
- 6CDTH    |      312.26 | 2020-05-13 04:04:00
- 6LK6A    |      213.24 | 2020-06-25 18:19:40
- 8K05J    |      158.14 | 2020-06-07 14:47:42
- AKS0M    |      113.14 | 2020-06-20 14:52:50
- AMXWZ    |       84.40 | 2020-06-03 23:09:02
- BR60U    |      148.50 | 2020-06-06 01:18:48
- BTCAB    |      160.70 | 2020-06-17 00:55:48
- C53NR    |      225.64 | 2020-06-11 05:28:37
- CFTD5    |      245.00 | 2020-06-03 04:43:27
- COG62    |      364.08 | 2020-05-21 16:36:53
- D64AK    |      209.97 | 2020-05-06 21:20:25
- E7R8V    |      120.50 | 2020-05-25 08:12:21
- EXGJY    |      358.99 | 2020-05-01 09:55:15
- F3GOZ    |      155.22 | 2020-05-24 20:26:43
- FE65G    |      197.45 | 2020-06-14 16:54:16
- FSX1T    |      233.16 | 2020-06-13 08:05:36
- G8U7F    |      130.93 | 2020-06-27 17:39:40
- GW1ZB    |      147.08 | 2020-06-03 14:06:48
- H5FG3    |      176.06 | 2020-06-22 07:11:59
- H6YU4    |       49.27 | 2020-06-05 02:49:25
- HNPAH    |      188.12 | 2020-06-03 10:04:08
- HRJXE    |      205.37 | 2020-06-10 07:57:50
- HZ7I4    |      129.48 | 2020-06-28 06:03:36
- IFT2U    |      525.12 | 2020-05-26 20:55:33
- KDVSL    |      168.47 | 2020-05-11 13:09:58
- LVXVI    |      152.68 | 2020-05-06 06:22:42
- OCGMA    |      545.97 | 2020-06-21 09:47:09
- P412S    |      152.24 | 2020-06-26 12:06:56
- PLCEU    |      199.28 | 2020-07-01 03:26:31
- PZAUG    |      182.99 | 2020-05-29 17:25:06
- QF5KP    |      163.93 | 2020-05-04 09:30:04
- QSRGO    |      255.62 | 2020-06-15 08:41:08
- RHTE8    |      127.50 | 2020-06-20 02:44:27
- S0L3A    |      198.77 | 2020-05-18 01:50:12
  SW6PI    |      624.56 | 2020-05-05 09:54:58
- TRLUG    |      120.40 | 2020-05-31 19:59:45
- U5J7W    |      121.16 | 2020-05-21 10:29:05
- VE8PN    |      167.42 | 2020-06-20 21:31:26
- VEKS6    |      124.19 | 2020-05-15 03:36:11
- VLVUG    |       88.34 | 2020-06-28 03:47:48
- WRPJY    |      215.37 | 2020-06-18 10:18:22
- X3OIW    |      112.70 | 2020-06-28 05:38:16
- YRI35    |      293.95 | 2020-05-10 13:35:43
- ZREUO    |      518.79 | 2020-06-28 02:24:10
  ZWLJS    |      147.00 | 2020-05-19 11:24:28
-(56 rows)
+ 5IZ2R    |      168.30 | 2020-06-09 02:42:38
+ FSX1T    |      233.16 | 2020-06-13 08:05:36
+(4 rows)
 
-;
 -- Problem E --
 -- To study the users’ shopping habits, you want to explore trends in the average order’s total price during the peak of the pandemic. 
 -- Suppose the peak date was 04/01/2020 (time placed). 
@@ -343,17 +305,20 @@ WHERE o.time_placed::date <= date '2020-04-01' AND o.time_placed >= (date '2020-
 (1 row)
 
 -- Problem F --
--- To study the users’ shopping habits, you want to explore trends in the average order’s total price during the peak of the pandemic. 
--- Suppose the peak date was 04/01/2020 (time placed). 
--- What was the average total price of all orders over the prior seven days? (Hint: Take advantage of the timestamp type.)
-SELECT AVG(o.total_price)
-FROM orders o
-WHERE o.time_placed::date <= date '2020-04-01' AND o.time_placed >= (date '2020-04-01' - 7)
+-- People like to shop for everything they need at one stop if possible, 
+-- which means that a store with a larger variety of categories may be more attractive to customers. 
+-- Read the “Hints on Multivalued Data” appendix at the end of this assignment. 
+-- Use the PostgreSQL string_to_array() function to list the store ID, the name, the store’s category list, 
+-- and the length of the list for each store with a zip code of 44401. You may also find the array_length() function useful.
+SELECT s.store_id, s.name, categories_array , array_length(categories_array, 1)
+FROM stores s, string_to_array(s.categories, ', ') as categories_array
+WHERE s.zip_code = '44401'
 ;
-         avg         
----------------------
- 54.1067483296213808
-(1 row)
+ store_id |             name             |                                                                                   categories_array                                                                                    | array_length 
+----------+------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------
+ FNJXE    | Pump-N-Pantry Of NY          | {Beverages,Deli,"Frozen Foods","Fruits & Vegetables","Grains & Pasta & Sides","Personal Care & Health","Baby Care","Bread & Bakery","Breakfast & Cereal","Meat & Seafood","Pet Care"} |           11
+ FX0RG    | 6-Twelve Convenient-Mart Inc | {"Baby Care","Bread & Bakery","Canned Goods & Soups","Frozen Foods","Fruits & Vegetables","Meat & Seafood"}                                                                           |            6
+(2 rows)
 
 -- Problem G --
 -- Continuing from the previous problem, use the UNNEST operator of PostgreSQL to create a normalized list with the store ID, 
@@ -432,12 +397,12 @@ WHERE o.total_price > 650
 ;
                                                  QUERY PLAN                                                  
 -------------------------------------------------------------------------------------------------------------
- Aggregate  (cost=365.56..365.57 rows=1 width=8) (actual time=5.925..5.926 rows=1 loops=1)
-   ->  Seq Scan on orders o  (cost=0.00..358.15 rows=2964 width=0) (actual time=1.046..5.917 rows=4 loops=1)
+ Aggregate  (cost=365.56..365.57 rows=1 width=8) (actual time=5.795..5.796 rows=1 loops=1)
+   ->  Seq Scan on orders o  (cost=0.00..358.15 rows=2964 width=0) (actual time=1.082..5.791 rows=4 loops=1)
          Filter: (total_price > '650'::numeric)
          Rows Removed by Filter: 19996
- Planning Time: 0.061 ms
- Execution Time: 5.961 ms
+ Planning Time: 0.047 ms
+ Execution Time: 5.817 ms
 (6 rows)
 
 -- Answers to Question
@@ -462,7 +427,25 @@ SELECT o.order_id, op.total_price
 FROM order_price op, orders o
 WHERE op.order_id = o.order_id AND op.total_price != o.total_price
 )
- 
+SELECT COUNT(*)
+FROM inconsistent_order_price
+;
+ count 
+-------
+     5
+(1 row)
+
+WITH 
+order_price AS (
+SELECT oi.order_id, SUM(oi.qty * oi.selling_price) AS total_price
+FROM orderitems oi
+GROUP BY oi.order_id
+),
+inconsistent_order_price AS (
+SELECT o.order_id, op.total_price
+FROM order_price op, orders o
+WHERE op.order_id = o.order_id AND op.total_price != o.total_price
+)
 UPDATE orders
 SET total_price = iop.total_price
 FROM inconsistent_order_price iop
@@ -492,14 +475,14 @@ WHERE o.total_price > 650
 ;
                                                             QUERY PLAN                                                             
 -----------------------------------------------------------------------------------------------------------------------------------
- Aggregate  (cost=478.96..478.97 rows=1 width=8) (actual time=0.026..0.027 rows=1 loops=1)
-   ->  Bitmap Heap Scan on orders o  (cost=131.96..462.29 rows=6667 width=0) (actual time=0.017..0.022 rows=4 loops=1)
+ Aggregate  (cost=478.96..478.97 rows=1 width=8) (actual time=0.034..0.035 rows=1 loops=1)
+   ->  Bitmap Heap Scan on orders o  (cost=131.96..462.29 rows=6667 width=0) (actual time=0.026..0.030 rows=4 loops=1)
          Recheck Cond: (total_price > '650'::numeric)
          Heap Blocks: exact=4
-         ->  Bitmap Index Scan on idx_total_price  (cost=0.00..130.29 rows=6667 width=0) (actual time=0.012..0.012 rows=4 loops=1)
+         ->  Bitmap Index Scan on idx_total_price  (cost=0.00..130.29 rows=6667 width=0) (actual time=0.020..0.020 rows=4 loops=1)
                Index Cond: (total_price > '650'::numeric)
- Planning Time: 0.070 ms
- Execution Time: 0.054 ms
+ Planning Time: 0.069 ms
+ Execution Time: 0.064 ms
 (8 rows)
 
 -- Answers to Question
@@ -550,22 +533,22 @@ LIMIT 20
 -- Print out the product IDs, product names, categories, list prices, and ranks.
 -- Read the “Advanced Aggregation in SQL” handout on the course wiki for more information about window queries in SQL. 
 -- Print the first 10 rows.
-SELECT p.product_id, p.name, p.category, p.list_price, RANK() OVER (ORDER BY (p.list_price) DESC)
+SELECT p.product_id, p.name, p.category, p.list_price, RANK() OVER (PARTITION BY P.category ORDER BY (p.list_price) DESC)
 FROM products p
 LIMIT 10
 ;
- product_id |                                             name                                              |        category        | list_price | rank 
-------------+-----------------------------------------------------------------------------------------------+------------------------+------------+------
- A0LI2      | Buitoni Basil Pesto Pasta Sauce - 7 Oz.                                                       | Grains & Pasta & Sides |            |    1
- BRYPX      | waterfront BISTRO Salmon Fillets Wild Alaskin Pink Boneless & Skin On - 32 Oz                 | Meat & Seafood         |            |    1
- 93NRR      | Quaker Oatmeal Instant Flavor Variety - 10-1.51 Oz                                            | Breakfast & Cereal     |            |    1
- 5YV6H      | Coffeemate Coffee Creamer Original - 35.3 Oz                                                  | Beverages              |            |    1
- 8YAY3      | Lucerne Farms Eggs Large - 12 Count                                                           | Dairy & Eggs & Cheese  |            |    1
- FJZQE      | Rosarita Beans Refried Traditional Can - 16 Oz                                                | Canned Goods & Soups   |            |    1
- X0401      | USDA Choice Beef Ribeye Roast Bone In - 6 Lbs. (approx. weight)                               | Meat & Seafood         |      59.94 |    7
- HW481      | USDA Choice Beef Top Loin New York Strip Steak Bone In Value Pack - 3.5 Lbs. (approx. weight) | Meat & Seafood         |      34.97 |    8
- Y7KB7      | Pull-Ups Training Pants Learning Designs 4T-5T Day & Night Disney Pixar - 56 Count            | Baby Care              |      32.99 |    9
- 4S9UJ      | Cesar Classics Canine Cuisine 4 Assorted Flavors Box - 24-3.5 Oz                              | Pet Care               |      28.29 |   10
+ product_id |                                        name                                         | category  | list_price | rank 
+------------+-------------------------------------------------------------------------------------+-----------+------------+------
+ Y7KB7      | Pull-Ups Training Pants Learning Designs 4T-5T Day & Night Disney Pixar - 56 Count  | Baby Care |      32.99 |    1
+ 84G67      | Pampers Swaddlers Diapers Size 1 Newborn - 96 Count                                 | Baby Care |      26.99 |    2
+ 9S30I      | Pampers Baby Dry Diapers Super Pack Size 5 - 78 Count                               | Baby Care |      26.99 |    2
+ Y5ZMA      | Signature Care Diapers Leakage Protection Size 6 35 Lb Plus - 64 Count              | Baby Care |      19.49 |    4
+ 2AT8T      | Huggies Refreshing Clean Baby Wipes Refill - 352 Count                              | Baby Care |      17.99 |    5
+ 9DA7J      | Pampers Complete Clean Baby Wipes Baby Fresh Scent 7 Pack - 504 Count               | Baby Care |      17.99 |    5
+ M3QZZ      | PediaSure Grow & Gain Kids Nutritional Shake Ready To Drink Chocolate - 6-8 Fl. Oz. | Baby Care |      12.99 |    7
+ WFT9G      | Pedialyte Electrolyte Powder Strawberry Lemonade - 6-0.6 Oz                         | Baby Care |      11.99 |    8
+ ZKYBU      | Pedialyte Electrolyte Solution Ready To Drink Grape - 33.8 Fl. Oz.                  | Baby Care |       7.99 |    9
+ Y56S6      | Pedialyte Electrolyte Solution Ready To Drink Strawberry - 33.8 Fl. Oz.             | Baby Care |       7.99 |    9
 (10 rows)
 
 			

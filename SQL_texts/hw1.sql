@@ -1,17 +1,25 @@
 --Creat Table DDLs--
 
-DROP TABLE IF EXISTS Users; 
-DROP TABLE IF EXISTS Customers; 
-DROP TABLE IF EXISTS Shoppers; 
-DROP TABLE IF EXISTS Vehicles; 
-DROP TABLE IF EXISTS Stores; 
-DROP TABLE IF EXISTS Products;
-DROP TABLE IF EXISTS Orders; 
-DROP TABLE IF EXISTS UserPhone;
-DROP TABLE IF EXISTS OrderItems; 
+
 DROP TABLE IF EXISTS StockedBy; 
 DROP TABLE IF EXISTS Own; 
 DROP TABLE IF EXISTS WorkFor; 
+
+DROP TABLE IF EXISTS UserPhone;
+DROP TABLE IF EXISTS OrderItems; 
+
+DROP TABLE IF EXISTS Orders; 
+
+DROP TABLE IF EXISTS Customers; 
+DROP TABLE IF EXISTS Shoppers; 
+
+DROP TABLE IF EXISTS Vehicles; 
+DROP TABLE IF EXISTS Stores; 
+DROP TABLE IF EXISTS Products;
+
+
+DROP TABLE IF EXISTS Users; 
+
 
 -- Entity tables below: --
 CREATE TABLE Users (
@@ -21,13 +29,23 @@ CREATE TABLE Users (
     last_name varchar(50) NOT NULL
 );
 
+CREATE TABLE UserPhone(
+    user_id char(5), 
+    type varchar(10), 
+    number varchar(20),
+    PRIMARY KEY (user_id, number),     
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) 
+);
+
 CREATE TABLE Customers (
-    user_id char(5) PRIMARY KEY
+    user_id char(5) PRIMARY KEY,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) 
 );
 
 CREATE TABLE Shoppers (
     user_id char(5) PRIMARY KEY,  
-    capacity INTEGER 
+    capacity INTEGER, 
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) 
 );
 
 CREATE TABLE Vehicles (
@@ -41,19 +59,19 @@ CREATE TABLE Vehicles (
 );
 
 CREATE TABLE Stores (
-    store_id varchar(5) PRIMARY KEY, 
-    name varchar(50), 
-    street varchar(100), 
-    city varchar(50),
-    state char(2), 
-    zip_code char(5), 
-    phone varchar(20), 
-    categories varchar(300)
+    store_id char(5) PRIMARY KEY, 
+    name varchar(50) NOT NULL, 
+    street varchar(100) NOT NULL, 
+    city varchar(50) NOT NULL,
+    state char(2) NOT NULL, 
+    zip_code char(5) NOT NULL, 
+    phone varchar(20) NOT NULL, 
+    categories varchar(300) NOT NULL
 );
 
 CREATE TABLE Products(
     product_id char(5) PRIMARY KEY, 
-    category varchar(100) NOT NULL, 
+    category varchar(100) NOT NULL,
     name varchar(100) NOT NULL, 
     description varchar(100) NOT NULL, 
     list_price decimal(9,2) 
@@ -61,25 +79,22 @@ CREATE TABLE Products(
 
 CREATE TABLE Orders (
     order_id char(5) PRIMARY KEY, 
-    total_price decimal(9,2), 
-    time_placed timestamp, 
+    total_price decimal(9,2) NOT NULL, 
+    time_placed timestamp NOT NULL, 
     pickup_time timestamp, 
-    customer_id char(5), 
-    shopper_id char(5), 
-    state char(2), 
-    license_plate varchar(15), 
-    store_id char(5), 
-    time_fulfilled timestamp
+    customer_id char(5) NOT NULL, 
+    shopper_id char(5) NOT NULL, 
+    state char(2) NOT NULL, 
+    license_plate varchar(15) NOT NULL, 
+    store_id char(5) NOT NULL, 
+    time_fulfilled timestamp,
+
+    FOREIGN KEY (customer_id) REFERENCES Customers(user_id),
+    FOREIGN KEY (shopper_id) REFERENCES Shoppers(user_id),
+    FOREIGN KEY (store_id) REFERENCES Stores(store_id),
+    FOREIGN KEY (state,license_plate) REFERENCES Vehicles(state,license_plate)
 );
 
-
--- Relationship tables below: --
-CREATE TABLE UserPhone(
-    user_id char(5), 
-    type varchar(10), 
-    number varchar(20),
-    PRIMARY KEY (user_id, number)     
-);
 
 CREATE TABLE OrderItems (
     item_id char(5), 
@@ -87,27 +102,37 @@ CREATE TABLE OrderItems (
     selling_price decimal(9, 2), 
     order_id char(5), 
     product_id char(5),
-    PRIMARY KEY (item_id, order_id) 
+    PRIMARY KEY (item_id, order_id),
+
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id)
 ); 
 
+-- Relationship tables below: --
 CREATE TABLE StockedBy (
     product_id char(5), 
     store_id char(5), 
     qty INTEGER,
-    PRIMARY KEY (product_id, store_id) 
+    PRIMARY KEY (product_id, store_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (store_id) REFERENCES Stores(store_id)
 );
 
 CREATE TABLE Own (
     state char(2), 
     license_plate char(15), 
     user_id char(5),
-    PRIMARY KEY (state, license_plate, user_id) 
+    PRIMARY KEY (state, license_plate, user_id),
+    FOREIGN KEY (state,license_plate) REFERENCES Vehicles(state,license_plate),
+    FOREIGN KEY (user_id) REFERENCES Customers(user_id)
 );
 
 CREATE TABLE WorkFor (
     store_id char(5), 
     shopper_id char(5),
-    PRIMARY KEY (store_id, shopper_id) 
+    PRIMARY KEY (store_id, shopper_id),
+    FOREIGN KEY (store_id) REFERENCES Stores(store_id),
+    FOREIGN KEY (shopper_id) REFERENCES Shoppers(user_id)
 );
 -- Data Loading --
 COPY Users (user_id, email, first_name, last_name)
@@ -196,7 +221,7 @@ FROM products
 -- with a capacity of at least 5 who work for one or more of the stores
 -- located in Seattle, WA.
 
-SELECT u.first_name, u.last_name 
+SELECT u.user_id, u.first_name, u.last_name 
 FROM users u, shoppers s
 WHERE 
     u.user_id = s.user_id 
@@ -237,8 +262,7 @@ LIMIT 10
 SELECT o.order_id, o.total_price, o.time_placed
 FROM orders o, orderitems oi
 WHERE o.order_id = oi.order_id AND date '2020-05-01' <= o.time_placed::date AND o.time_placed::date <= date '2020-07-01'
-GROUP BY o.order_id
-HAVING SUM (oi.qty) > 25;
+AND oi.qty >= 25
 ;
 
 -- Problem E --
@@ -253,13 +277,16 @@ WHERE o.time_placed::date <= date '2020-04-01' AND o.time_placed >= (date '2020-
 ;
 -- Problem F --
 
--- To study the users’ shopping habits, you want to explore trends in the average order’s total price during the peak of the pandemic. 
--- Suppose the peak date was 04/01/2020 (time placed). 
--- What was the average total price of all orders over the prior seven days? (Hint: Take advantage of the timestamp type.)
+-- People like to shop for everything they need at one stop if possible, 
+-- which means that a store with a larger variety of categories may be more attractive to customers. 
+-- Read the “Hints on Multivalued Data” appendix at the end of this assignment. 
+-- Use the PostgreSQL string_to_array() function to list the store ID, the name, the store’s category list, 
+-- and the length of the list for each store with a zip code of 44401. You may also find the array_length() function useful.
 
-SELECT AVG(o.total_price)
-FROM orders o
-WHERE o.time_placed::date <= date '2020-04-01' AND o.time_placed >= (date '2020-04-01' - 7)
+
+SELECT s.store_id, s.name, categories_array , array_length(categories_array, 1)
+FROM stores s, string_to_array(s.categories, ', ') as categories_array
+WHERE s.zip_code = '44401'
 ;
 
 -- Problem G --
@@ -340,7 +367,24 @@ SELECT o.order_id, op.total_price
 FROM order_price op, orders o
 WHERE op.order_id = o.order_id AND op.total_price != o.total_price
 )
- 
+
+SELECT COUNT(*)
+FROM inconsistent_order_price
+;
+
+WITH 
+order_price AS (
+SELECT oi.order_id, SUM(oi.qty * oi.selling_price) AS total_price
+FROM orderitems oi
+GROUP BY oi.order_id
+),
+
+inconsistent_order_price AS (
+SELECT o.order_id, op.total_price
+FROM order_price op, orders o
+WHERE op.order_id = o.order_id AND op.total_price != o.total_price
+)
+
 UPDATE orders
 SET total_price = iop.total_price
 FROM inconsistent_order_price iop
@@ -398,7 +442,7 @@ LIMIT 20
 -- Print the first 10 rows.
 
 
-SELECT p.product_id, p.name, p.category, p.list_price, RANK() OVER (ORDER BY (p.list_price) DESC)
+SELECT p.product_id, p.name, p.category, p.list_price, RANK() OVER (PARTITION BY P.category ORDER BY (p.list_price) DESC)
 FROM products p
 LIMIT 10
 ;
